@@ -19,6 +19,7 @@ YDL_OPTIONS: dict[str, Any] = {
     "default_search": "ytsearch",
     "source_address": "0.0.0.0",
     "extract_flat": False,
+    "cookiefile": "cookies.txt",
 }
 
 cookies_file = Path(YTDLP_COOKIES_FILE)
