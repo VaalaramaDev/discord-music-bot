@@ -16,11 +16,10 @@ YDL_OPTIONS: dict[str, Any] = {
     "format": "bestaudio/best",
     "quiet": True,
     "no_warnings": True,
-    "default_search": "ytsearch",
+    "default_search": "scsearch",
     "source_address": "0.0.0.0",
     "extract_flat": False,
     "cookiefile": "cookies.txt",
-    "extractor_args": {"youtube": {"player_client": ["web", "android"]}},
 }
 
 cookies_file = Path(YTDLP_COOKIES_FILE)
@@ -40,13 +39,13 @@ def _normalize_query(query: str) -> str:
     lowered_query = query.lower().strip()
     if lowered_query.startswith(("http://", "https://")):
         return query
-    if lowered_query.startswith(("ytsearch:", "scsearch:")):
+    if lowered_query.startswith("scsearch:"):
         return query
     if "soundcloud.com" in lowered_query:
         return query
     if "youtube.com" in lowered_query or "youtu.be" in lowered_query:
         return query
-    return f"ytsearch:{query}"
+    return f"scsearch:{query}"
 
 
 def _extract_sync(query: str) -> dict[str, Any] | None:
