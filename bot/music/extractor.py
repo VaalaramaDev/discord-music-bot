@@ -3,9 +3,14 @@
 from __future__ import annotations
 
 import asyncio
+import logging
+from pathlib import Path
 from typing import Any
 
 import yt_dlp
+from config import YTDLP_COOKIES_FILE
+
+logger = logging.getLogger(__name__)
 
 YDL_OPTIONS: dict[str, Any] = {
     "format": "bestaudio/best",
@@ -15,6 +20,12 @@ YDL_OPTIONS: dict[str, Any] = {
     "source_address": "0.0.0.0",
     "extract_flat": False,
 }
+
+cookies_file = Path(YTDLP_COOKIES_FILE)
+if cookies_file.is_file():
+    YDL_OPTIONS["cookiefile"] = str(cookies_file)
+else:
+    logger.warning("yt-dlp cookies file not found: %s", cookies_file)
 
 FFMPEG_OPTIONS = {
     "before_options": "-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5",
@@ -73,7 +84,9 @@ async def extract_info(query: str) -> dict[str, Any] | None:
     """Extract playable audio metadata for a URL or search query."""
     try:
         return await asyncio.to_thread(_extract_sync, query)
-    except yt_dlp.utils.DownloadError:
+    except yt_dlp.utils.DownloadError as exc:
+        logger.warning("yt-dlp failed to extract query %r: %s", query, exc)
         return None
     except Exception:
+        logger.exception("Unexpected extractor error for query %r", query)
         return None

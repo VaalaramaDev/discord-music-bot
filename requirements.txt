@@ -1,4 +1,5 @@
 discord.py==2.7.1
 yt-dlp
 davey
+PyNaCl
 python-dotenv==1.0.0

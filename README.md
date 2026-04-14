@@ -220,6 +220,7 @@ docker compose exec bot ffmpeg -version
 | `GUILD_ID`       | required | Your Discord server ID              |
 | `LOG_LEVEL`      | `INFO`   | Logging level                       |
 | `DEFAULT_VOLUME` | `0.5`    | Default volume (0.0–1.0)            |
+| `YTDLP_COOKIES_FILE` | `cookies.txt` | Path to exported YouTube cookies for yt-dlp |
 
 ---
 
@@ -239,6 +240,12 @@ docker compose exec bot ffmpeg -version
 - Stream URLs from yt-dlp expire after ~6 hours — long queues may fail on old tracks
 - YouTube may occasionally block VPS IPs — if this happens, yt-dlp cookies can be configured
 - SoundCloud search requires direct track URLs; search by keyword uses YouTube as fallback
+
+### YouTube cookies
+
+If YouTube starts returning `Sign in to confirm you're not a bot`, export cookies from a browser where YouTube is logged in and place them at `cookies.txt` in the project root, or point `YTDLP_COOKIES_FILE` to another path.
+
+With Docker Compose, the repository root is copied into `/app`, so the default `cookies.txt` path works after rebuild.
 
 ---
 
