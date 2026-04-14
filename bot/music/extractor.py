@@ -20,6 +20,7 @@ YDL_OPTIONS: dict[str, Any] = {
     "source_address": "0.0.0.0",
     "extract_flat": False,
     "cookiefile": "cookies.txt",
+    "extractor_args": {"youtube": {"player_client": ["web", "android"]}},
 }
 
 cookies_file = Path(YTDLP_COOKIES_FILE)
@@ -38,6 +39,8 @@ def _normalize_query(query: str) -> str:
     """Normalize user input into a yt-dlp compatible query."""
     lowered_query = query.lower().strip()
     if lowered_query.startswith(("http://", "https://")):
+        return query
+    if lowered_query.startswith(("ytsearch:", "scsearch:")):
         return query
     if "soundcloud.com" in lowered_query:
         return query
