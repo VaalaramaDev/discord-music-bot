@@ -23,18 +23,30 @@ intents.presences = True
 intents.voice_states = True
 
 bot = commands.Bot(command_prefix="!", intents=intents)
-target_guild = discord.Object(id=GUILD_ID)
+MY_GUILD = discord.Object(id=GUILD_ID)
 
 
 @bot.event
 async def on_ready() -> None:
     """Load extensions and sync commands when the bot is ready."""
-    if not getattr(bot, "_music_extension_loaded", False):
+    if getattr(bot, "_music_extension_loaded", False):
+        return
+
+    try:
         await bot.load_extension("bot.cogs.music")
-        bot.tree.copy_global_to(guild=target_guild)
-        await bot.tree.sync(guild=target_guild)
+    except Exception as error:
+        print(f"Failed to load extension: {error}")
+        raise
+
+    bot.tree.copy_global_to(guild=MY_GUILD)
+
+    try:
+        synced = await bot.tree.sync(guild=MY_GUILD)
         setattr(bot, "_music_extension_loaded", True)
-    print(f"Logged in as {bot.user} | Synced to guild {GUILD_ID}")
+        print(f"Logged in as {bot.user} | Synced {len(synced)} commands to guild {GUILD_ID}")
+    except Exception as error:
+        print(f"Failed to sync commands: {error}")
+        raise
 
 
 if not BOT_TOKEN:

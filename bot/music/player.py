@@ -34,20 +34,23 @@ class GuildPlayer:
 
     async def connect(self, channel: discord.VoiceChannel) -> bool:
         """Connect to a voice channel or move there if already connected."""
-        if self.voice_client and self.voice_client.is_connected():
-            if self.voice_client.channel.id != channel.id:
-                await self.voice_client.move_to(channel)
-            return True
-
         try:
-            await asyncio.sleep(0.5)
+            if self.voice_client is not None:
+                try:
+                    await self.voice_client.disconnect(force=True)
+                except Exception:
+                    pass
+                self.voice_client = None
+                await asyncio.sleep(1.0)
+
             self.voice_client = await channel.connect(
                 reconnect=False,
-                timeout=10.0,
+                timeout=15.0,
                 self_deaf=True,
             )
             return True
-        except Exception:
+        except Exception as error:
+            print(f"Voice connect error: {error}")
             self.voice_client = None
             return False
 
